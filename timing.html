@@ -1,0 +1,1463 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Timing | Digital Logic Simulator</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #eafaff;
+            min-height: 100vh;
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(0, 255, 255, 0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 80% 70%,
+                    rgba(0, 140, 255, 0.12),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #020617,
+                    #031827,
+                    #00111f
+                );
+        }
+
+
+        /* =========================
+           ANIMATED BACKGROUND
+        ========================= */
+
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .grid {
+            position: absolute;
+            inset: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(0, 255, 255, 0.05) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(0, 255, 255, 0.05) 1px,
+                    transparent 1px
+                );
+
+            background-size: 45px 45px;
+
+            animation: gridMove 12s linear infinite;
+        }
+
+        @keyframes gridMove {
+
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(45px);
+            }
+
+        }
+
+
+        .circle {
+            position: absolute;
+
+            width: 220px;
+            height: 220px;
+
+            border: 1px solid rgba(0, 255, 255, 0.18);
+
+            border-radius: 50%;
+
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .circle.one {
+            top: 10%;
+            left: 5%;
+        }
+
+        .circle.two {
+            right: 5%;
+            bottom: 10%;
+
+            width: 280px;
+            height: 280px;
+
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-25px) scale(1.05);
+            }
+
+        }
+
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+            width: 100%;
+
+            padding: 22px 8%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            background: rgba(2, 15, 30, 0.78);
+
+            backdrop-filter: blur(12px);
+
+            border-bottom:
+                1px solid rgba(0, 255, 255, 0.15);
+
+            position: sticky;
+            top: 0;
+
+            z-index: 10;
+        }
+
+
+        .logo {
+            font-size: 23px;
+
+            font-weight: bold;
+
+            color: #00f6ff;
+
+            letter-spacing: 1px;
+        }
+
+
+        nav {
+            display: flex;
+
+            gap: 22px;
+
+            flex-wrap: wrap;
+
+            justify-content: flex-end;
+        }
+
+
+        nav a {
+            color: #b9eaff;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            transition: 0.3s;
+        }
+
+
+        nav a:hover,
+        nav a.active {
+
+            color: #00f6ff;
+
+            text-shadow:
+                0 0 10px #00f6ff;
+        }
+
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+
+            width: 88%;
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 70px 0;
+        }
+
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+
+            text-align: center;
+
+            margin-bottom: 50px;
+        }
+
+
+        .hero h1 {
+
+            font-size: 48px;
+
+            color: #00f6ff;
+
+            text-shadow:
+                0 0 18px rgba(0, 246, 255, 0.5);
+
+            margin-bottom: 15px;
+        }
+
+
+        .hero p {
+
+            color: #b7dce8;
+
+            max-width: 850px;
+
+            margin: auto;
+
+            line-height: 1.8;
+
+            font-size: 16px;
+        }
+
+
+        /* =========================
+           INTRO CARD
+        ========================= */
+
+        .intro-card {
+
+            background:
+                rgba(5, 24, 42, 0.82);
+
+            border:
+                1px solid rgba(0, 246, 255, 0.18);
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            margin-bottom: 40px;
+
+            box-shadow:
+                0 0 30px rgba(0, 200, 255, 0.06);
+        }
+
+
+        .intro-card h2 {
+
+            color: #00f6ff;
+
+            margin-bottom: 15px;
+
+            font-size: 25px;
+        }
+
+
+        .intro-card p {
+
+            color: #c2e5ed;
+
+            line-height: 1.8;
+
+            font-size: 15px;
+        }
+
+
+        /* =========================
+           TIMING CONCEPT CARDS
+        ========================= */
+
+        .timing-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 22px;
+
+            margin-bottom: 50px;
+        }
+
+
+        .timing-card {
+
+            background:
+                rgba(5, 24, 42, 0.82);
+
+            border:
+                1px solid rgba(0, 246, 255, 0.18);
+
+            border-radius: 18px;
+
+            padding: 25px;
+
+            transition: 0.35s;
+        }
+
+
+        .timing-card:hover {
+
+            transform:
+                translateY(-7px);
+
+            border-color:
+                rgba(0, 246, 255, 0.6);
+
+            box-shadow:
+                0 0 30px
+                rgba(0, 246, 255, 0.13);
+        }
+
+
+        .timing-card h3 {
+
+            color: #00f6ff;
+
+            margin-bottom: 12px;
+
+            font-size: 20px;
+        }
+
+
+        .timing-card p {
+
+            color: #c2e5ed;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           WAVEFORM SECTION
+        ========================= */
+
+        .wave-section {
+
+            background:
+                rgba(5, 24, 42, 0.82);
+
+            border:
+                1px solid rgba(0, 246, 255, 0.18);
+
+            border-radius: 18px;
+
+            padding: 30px;
+
+            margin-bottom: 45px;
+        }
+
+
+        .wave-section h2 {
+
+            color: #00f6ff;
+
+            text-align: center;
+
+            margin-bottom: 25px;
+        }
+
+
+        .wave-container {
+
+            background:
+                rgba(0, 0, 0, 0.28);
+
+            border-radius: 14px;
+
+            padding: 25px;
+
+            overflow-x: auto;
+        }
+
+
+        .wave-row {
+
+            min-width: 750px;
+
+            display: grid;
+
+            grid-template-columns:
+                100px 1fr;
+
+            align-items: center;
+
+            margin-bottom: 22px;
+        }
+
+
+        .wave-label {
+
+            color: #b9eaff;
+
+            font-weight: bold;
+
+            font-size: 14px;
+        }
+
+
+        .wave {
+
+            height: 50px;
+
+            position: relative;
+        }
+
+
+        .wave::before {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+
+            right: 0;
+
+            top: 25px;
+
+            height: 1px;
+
+            background:
+                rgba(0, 246, 255, 0.2);
+        }
+
+
+        /* Clock waveform */
+
+        .clock-wave {
+
+            position: absolute;
+
+            inset: 0;
+
+            display: flex;
+
+            align-items: center;
+        }
+
+
+        .clock-wave span {
+
+            display: block;
+
+            width: 55px;
+
+            height: 25px;
+
+            border-top:
+                3px solid #00f6ff;
+
+            border-right:
+                3px solid #00f6ff;
+
+            border-bottom:
+                3px solid #00f6ff;
+
+            transform:
+                skewX(-25deg);
+
+            margin-right: 10px;
+
+            box-shadow:
+                0 0 8px
+                rgba(0, 246, 255, 0.4);
+        }
+
+
+        /* Data waveform */
+
+        .data-wave {
+
+            position: absolute;
+
+            left: 0;
+
+            right: 0;
+
+            top: 5px;
+
+            height: 40px;
+
+            background:
+                linear-gradient(
+                    90deg,
+
+                    transparent 0%,
+                    transparent 8%,
+
+                    #00f6ff 8%,
+                    #00f6ff 9%,
+
+                    transparent 9%,
+                    transparent 20%,
+
+                    #00f6ff 20%,
+                    #00f6ff 21%,
+
+                    transparent 21%,
+                    transparent 35%,
+
+                    #00f6ff 35%,
+                    #00f6ff 36%,
+
+                    transparent 36%,
+                    transparent 51%,
+
+                    #00f6ff 51%,
+                    #00f6ff 52%,
+
+                    transparent 52%,
+                    transparent 67%,
+
+                    #00f6ff 67%,
+                    #00f6ff 68%,
+
+                    transparent 68%,
+                    transparent 82%,
+
+                    #00f6ff 82%,
+                    #00f6ff 83%,
+
+                    transparent 83%
+                );
+
+            opacity: 0.85;
+
+            animation:
+                signalMove 2.5s
+                linear infinite;
+        }
+
+
+        @keyframes signalMove {
+
+            from {
+                transform:
+                    translateX(-15px);
+            }
+
+            to {
+                transform:
+                    translateX(15px);
+            }
+
+        }
+
+
+        /* =========================
+           TIMING PARAMETERS
+        ========================= */
+
+        .parameter-section {
+
+            margin-bottom: 45px;
+        }
+
+
+        .parameter-section h2 {
+
+            text-align: center;
+
+            color: #00f6ff;
+
+            font-size: 30px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .parameter-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 20px;
+        }
+
+
+        .parameter {
+
+            background:
+                rgba(5, 24, 42, 0.82);
+
+            border:
+                1px solid rgba(0, 246, 255, 0.15);
+
+            border-radius: 15px;
+
+            padding: 22px;
+        }
+
+
+        .parameter h3 {
+
+            color: #00f6ff;
+
+            margin-bottom: 10px;
+        }
+
+
+        .parameter p {
+
+            color: #c2e5ed;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================
+           TABLE
+        ========================= */
+
+        .table-section {
+
+            margin-bottom: 45px;
+        }
+
+
+        .table-section h2 {
+
+            text-align: center;
+
+            color: #00f6ff;
+
+            margin-bottom: 25px;
+
+            font-size: 30px;
+        }
+
+
+        .table-wrapper {
+
+            overflow-x: auto;
+
+            border-radius: 15px;
+
+            border:
+                1px solid rgba(0, 246, 255, 0.15);
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse:
+                collapse;
+
+            background:
+                rgba(3, 20, 35, 0.8);
+        }
+
+
+        th,
+        td {
+
+            padding: 16px;
+
+            text-align: left;
+
+            border-bottom:
+                1px solid
+                rgba(0, 246, 255, 0.1);
+        }
+
+
+        th {
+
+            color: #00f6ff;
+
+            background:
+                rgba(0, 246, 255, 0.07);
+        }
+
+
+        td {
+
+            color: #c5e6ee;
+        }
+
+
+        tr:hover td {
+
+            background:
+                rgba(0, 246, 255, 0.04);
+        }
+
+
+        /* =========================
+           NAVIGATION BUTTONS
+        ========================= */
+
+        .navigation {
+
+            margin-top: 55px;
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            gap: 20px;
+        }
+
+
+        .btn {
+
+            display: inline-block;
+
+            padding:
+                13px 25px;
+
+            border-radius:
+                30px;
+
+            border:
+                1px solid #00f6ff;
+
+            color: #00f6ff;
+
+            text-decoration: none;
+
+            background:
+                rgba(0, 246, 255, 0.05);
+
+            transition: 0.3s;
+        }
+
+
+        .btn:hover {
+
+            background:
+                #00f6ff;
+
+            color:
+                #00111f;
+
+            box-shadow:
+                0 0 20px
+                rgba(0, 246, 255, 0.5);
+        }
+
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            text-align: center;
+
+            padding: 30px;
+
+            border-top:
+                1px solid
+                rgba(0, 246, 255, 0.12);
+
+            color: #7fb5c2;
+
+            font-size: 13px;
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            header {
+
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+
+            nav {
+
+                justify-content: center;
+            }
+
+
+            .timing-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .parameter-grid {
+
+                grid-template-columns:
+                    1fr;
+            }
+
+
+            .hero h1 {
+
+                font-size: 38px;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .hero h1 {
+
+                font-size: 32px;
+            }
+
+
+            .container {
+
+                width: 92%;
+            }
+
+
+            .navigation {
+
+                flex-direction: column;
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         ANIMATED BACKGROUND
+    ========================= -->
+
+    <div class="background">
+
+        <div class="grid"></div>
+
+        <div class="circle one"></div>
+
+        <div class="circle two"></div>
+
+    </div>
+
+
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header>
+
+        <div class="logo">
+            LogicFlow
+        </div>
+
+
+        <nav>
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="simulator.html">
+                Simulator
+            </a>
+
+            <a href="datapath.html">
+                Data Path
+            </a>
+
+            <a href="signals.html">
+                Signals
+            </a>
+
+            <a href="timing.html" class="active">
+                Timing
+            </a>
+
+            <a href="truth-table.html">
+                Truth Table
+            </a>
+
+            <a href="simulation.html">
+                Simulation
+            </a>
+
+            <a href="conclusion.html">
+                Conclusion
+            </a>
+
+        </nav>
+
+    </header>
+
+
+
+    <!-- =========================
+         MAIN
+    ========================= -->
+
+    <main class="container">
+
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <h1>
+                Timing Analysis
+            </h1>
+
+            <p>
+                Timing analysis explains how digital signals change with
+                respect to time. It helps us understand clock pulses,
+                signal transitions, propagation delay and the correct
+                synchronization of digital operations.
+            </p>
+
+        </section>
+
+
+
+        <!-- INTRO -->
+
+        <section class="intro-card">
+
+            <h2>
+                Why Timing Matters
+            </h2>
+
+            <p>
+                In a digital system, signals must reach the required
+                components at the correct time. Timing ensures that
+                data is sampled, processed and transferred in a
+                synchronized manner. A small timing difference can
+                affect the correctness and reliability of a digital
+                circuit.
+            </p>
+
+        </section>
+
+
+
+        <!-- TIMING CONCEPTS -->
+
+        <section class="timing-grid">
+
+
+            <div class="timing-card">
+
+                <h3>
+                    Clock
+                </h3>
+
+                <p>
+                    The clock provides regular timing pulses that
+                    synchronize operations in a digital circuit.
+                </p>
+
+            </div>
+
+
+            <div class="timing-card">
+
+                <h3>
+                    Frequency
+                </h3>
+
+                <p>
+                    Frequency represents the number of clock cycles
+                    occurring in one second and is measured in Hertz.
+                </p>
+
+            </div>
+
+
+            <div class="timing-card">
+
+                <h3>
+                    Period
+                </h3>
+
+                <p>
+                    The clock period is the time required to complete
+                    one complete clock cycle.
+                </p>
+
+            </div>
+
+
+            <div class="timing-card">
+
+                <h3>
+                    Rising Edge
+                </h3>
+
+                <p>
+                    The rising edge occurs when a signal changes from
+                    logic LOW to logic HIGH.
+                </p>
+
+            </div>
+
+
+            <div class="timing-card">
+
+                <h3>
+                    Falling Edge
+                </h3>
+
+                <p>
+                    The falling edge occurs when a signal changes from
+                    logic HIGH to logic LOW.
+                </p>
+
+            </div>
+
+
+            <div class="timing-card">
+
+                <h3>
+                    Propagation Delay
+                </h3>
+
+                <p>
+                    Propagation delay is the time taken for a change at
+                    the input of a circuit to appear at its output.
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- WAVEFORM -->
+
+        <section class="wave-section">
+
+            <h2>
+                Digital Timing Waveform
+            </h2>
+
+
+            <div class="wave-container">
+
+
+                <!-- CLOCK -->
+
+                <div class="wave-row">
+
+                    <div class="wave-label">
+                        CLOCK
+                    </div>
+
+
+                    <div class="wave">
+
+                        <div class="clock-wave">
+
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- DATA -->
+
+                <div class="wave-row">
+
+                    <div class="wave-label">
+                        DATA
+                    </div>
+
+
+                    <div class="wave">
+
+                        <div class="data-wave"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ENABLE -->
+
+                <div class="wave-row">
+
+                    <div class="wave-label">
+                        ENABLE
+                    </div>
+
+
+                    <div class="wave">
+
+                        <div class="data-wave"></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- OUTPUT -->
+
+                <div class="wave-row">
+
+                    <div class="wave-label">
+                        OUTPUT
+                    </div>
+
+
+                    <div class="wave">
+
+                        <div class="data-wave"></div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- PARAMETERS -->
+
+        <section class="parameter-section">
+
+            <h2>
+                Important Timing Parameters
+            </h2>
+
+
+            <div class="parameter-grid">
+
+
+                <div class="parameter">
+
+                    <h3>
+                        Setup Time
+                    </h3>
+
+                    <p>
+                        Setup time is the minimum amount of time that
+                        input data must remain stable before the active
+                        clock edge.
+                    </p>
+
+                </div>
+
+
+                <div class="parameter">
+
+                    <h3>
+                        Hold Time
+                    </h3>
+
+                    <p>
+                        Hold time is the minimum amount of time that
+                        input data must remain stable after the active
+                        clock edge.
+                    </p>
+
+                </div>
+
+
+                <div class="parameter">
+
+                    <h3>
+                        Clock Period
+                    </h3>
+
+                    <p>
+                        Clock period represents the duration of one
+                        complete clock cycle and is related to frequency
+                        using T = 1 / f.
+                    </p>
+
+                </div>
+
+
+                <div class="parameter">
+
+                    <h3>
+                        Propagation Delay
+                    </h3>
+
+                    <p>
+                        Propagation delay represents the time required
+                        for a signal transition to travel through a
+                        logic component.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- TABLE -->
+
+        <section class="table-section">
+
+            <h2>
+                Timing Parameters Summary
+            </h2>
+
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Parameter
+                            </th>
+
+                            <th>
+                                Meaning
+                            </th>
+
+                            <th>
+                                Unit
+                            </th>
+
+                            <th>
+                                Importance
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        <tr>
+
+                            <td>
+                                Frequency
+                            </td>
+
+                            <td>
+                                Number of cycles per second
+                            </td>
+
+                            <td>
+                                Hz
+                            </td>
+
+                            <td>
+                                Determines operating speed
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Period
+                            </td>
+
+                            <td>
+                                Duration of one clock cycle
+                            </td>
+
+                            <td>
+                                Seconds
+                            </td>
+
+                            <td>
+                                Defines cycle timing
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Setup Time
+                            </td>
+
+                            <td>
+                                Data stability before clock edge
+                            </td>
+
+                            <td>
+                                ns
+                            </td>
+
+                            <td>
+                                Prevents incorrect sampling
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Hold Time
+                            </td>
+
+                            <td>
+                                Data stability after clock edge
+                            </td>
+
+                            <td>
+                                ns
+                            </td>
+
+                            <td>
+                                Maintains reliable data capture
+                            </td>
+
+                        </tr>
+
+
+                        <tr>
+
+                            <td>
+                                Propagation Delay
+                            </td>
+
+                            <td>
+                                Time taken for signal transition
+                            </td>
+
+                            <td>
+                                ns
+                            </td>
+
+                            <td>
+                                Determines circuit response
+                            </td>
+
+                        </tr>
+
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- NAVIGATION -->
+
+        <div class="navigation">
+
+            <a
+                href="signals.html"
+                class="btn"
+            >
+                ← Previous: Signals
+            </a>
+
+
+            <a
+                href="truth-table.html"
+                class="btn"
+            >
+                Next: Truth Table →
+            </a>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        Digital Logic Simulator • Timing Analysis
+
+    </footer>
+
+
+</body>
+</html>
+```

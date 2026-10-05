@@ -1,0 +1,2265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Truth Table | LogicFlow</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #eafaff;
+            min-height: 100vh;
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(
+                    circle at 20% 20%,
+                    rgba(0, 246, 255, 0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 80% 70%,
+                    rgba(0, 100, 255, 0.12),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #020617,
+                    #06152b,
+                    #020617
+                );
+        }
+
+        /* =========================
+           ANIMATED BACKGROUND
+        ========================= */
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(0, 246, 255, 0.05) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(0, 246, 255, 0.05) 1px,
+                    transparent 1px
+                );
+
+            background-size: 45px 45px;
+
+            animation:
+                gridMove 18s linear infinite;
+
+            pointer-events: none;
+            z-index: -3;
+        }
+
+        @keyframes gridMove {
+
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(45px);
+            }
+
+        }
+
+        body::after {
+            content: "";
+
+            position: fixed;
+
+            width: 330px;
+            height: 330px;
+
+            border-radius: 50%;
+
+            border: 1px solid
+                rgba(0, 246, 255, 0.12);
+
+            right: -120px;
+            top: 20%;
+
+            box-shadow:
+                0 0 70px
+                rgba(0, 246, 255, 0.04);
+
+            animation:
+                floatingCircle 9s ease-in-out infinite;
+
+            pointer-events: none;
+
+            z-index: -2;
+        }
+
+        @keyframes floatingCircle {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(45px);
+            }
+
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        header {
+
+            position: sticky;
+            top: 0;
+
+            z-index: 1000;
+
+            display: flex;
+
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 18px 6%;
+
+            background:
+                rgba(2, 6, 23, 0.88);
+
+            backdrop-filter:
+                blur(14px);
+
+            border-bottom:
+                1px solid
+                rgba(0, 246, 255, 0.15);
+        }
+
+        .logo {
+
+            font-size: 26px;
+
+            font-weight: bold;
+
+            color: #00f6ff;
+
+            letter-spacing: 1px;
+
+            text-shadow:
+                0 0 15px
+                rgba(0, 246, 255, 0.35);
+        }
+
+        nav {
+
+            display: flex;
+
+            gap: 18px;
+
+            flex-wrap: wrap;
+
+            justify-content: flex-end;
+        }
+
+        nav a {
+
+            position: relative;
+
+            color: #b9dfe8;
+
+            text-decoration: none;
+
+            font-size: 13px;
+
+            transition: 0.3s;
+        }
+
+        nav a:hover,
+        nav a.active {
+
+            color: #00f6ff;
+        }
+
+        nav a.active::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 100%;
+            height: 2px;
+
+            background: #00f6ff;
+
+            left: 0;
+            bottom: -7px;
+
+            box-shadow:
+                0 0 8px #00f6ff;
+        }
+
+        /* =========================
+           MAIN
+        ========================= */
+
+        main {
+
+            width: 90%;
+
+            max-width: 1250px;
+
+            margin: auto;
+
+            padding: 70px 0;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+
+            text-align: center;
+
+            margin-bottom: 55px;
+        }
+
+        .hero span {
+
+            color: #00f6ff;
+
+            font-size: 14px;
+
+            letter-spacing: 4px;
+
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+
+            margin-top: 15px;
+
+            font-size:
+                clamp(40px, 6vw, 68px);
+
+            color: white;
+
+            text-shadow:
+                0 0 25px
+                rgba(0, 246, 255, 0.3);
+        }
+
+        .hero p {
+
+            max-width: 780px;
+
+            margin:
+                20px auto 0;
+
+            line-height: 1.8;
+
+            color: #a9c7d1;
+
+            font-size: 16px;
+        }
+
+        /* =========================
+           PANELS
+        ========================= */
+
+        .panel {
+
+            background:
+                rgba(5, 18, 40, 0.82);
+
+            border:
+                1px solid
+                rgba(0, 246, 255, 0.16);
+
+            border-radius: 22px;
+
+            padding: 30px;
+
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 15px 45px
+                rgba(0, 0, 0, 0.25),
+
+                inset 0 0 25px
+                rgba(0, 246, 255, 0.025);
+        }
+
+        .panel h2 {
+
+            color: #00f6ff;
+
+            margin-bottom: 12px;
+        }
+
+        .description {
+
+            color: #9ebcc7;
+
+            line-height: 1.7;
+
+            margin-bottom: 25px;
+        }
+
+        /* =========================
+           GATE SELECTOR
+        ========================= */
+
+        .gate-controls {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(7, 1fr);
+
+            gap: 10px;
+
+            margin-bottom: 25px;
+        }
+
+        .gate-btn {
+
+            padding: 13px 8px;
+
+            border:
+                1px solid
+                rgba(0, 246, 255, 0.18);
+
+            border-radius: 10px;
+
+            background:
+                rgba(0, 246, 255, 0.035);
+
+            color: #bceaf2;
+
+            cursor: pointer;
+
+            font-weight: bold;
+
+            transition: 0.3s;
+        }
+
+        .gate-btn:hover {
+
+            transform: translateY(-2px);
+
+            border-color:
+                rgba(0, 246, 255, 0.6);
+
+            color: #00f6ff;
+        }
+
+        .gate-btn.active {
+
+            background:
+                rgba(0, 246, 255, 0.13);
+
+            color: #00f6ff;
+
+            border-color: #00f6ff;
+
+            box-shadow:
+                0 0 15px
+                rgba(0, 246, 255, 0.15);
+        }
+
+        /* =========================
+           GATE INFO
+        ========================= */
+
+        .gate-info {
+
+            display: grid;
+
+            grid-template-columns:
+                1.3fr 1fr 1fr;
+
+            gap: 18px;
+
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+
+            padding: 22px;
+
+            border-radius: 16px;
+
+            background:
+                rgba(0, 246, 255, 0.035);
+
+            border:
+                1px solid
+                rgba(0, 246, 255, 0.12);
+        }
+
+        .info-box small {
+
+            display: block;
+
+            color: #71919b;
+
+            margin-bottom: 8px;
+
+            text-transform: uppercase;
+
+            letter-spacing: 1px;
+        }
+
+        .info-box strong {
+
+            color: white;
+
+            font-size: 20px;
+        }
+
+        .info-box p {
+
+            color: #9ebbc4;
+
+            line-height: 1.6;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           TRUTH TABLE
+        ========================= */
+
+        .table-container {
+
+            overflow-x: auto;
+
+            border-radius: 14px;
+
+            border:
+                1px solid
+                rgba(0, 246, 255, 0.12);
+        }
+
+        table {
+
+            width: 100%;
+
+            min-width: 500px;
+
+            border-collapse: collapse;
+        }
+
+        thead {
+
+            background:
+                rgba(0, 246, 255, 0.09);
+        }
+
+        th {
+
+            padding: 17px;
+
+            color: #00f6ff;
+
+            font-size: 14px;
+
+            letter-spacing: 1px;
+
+            border-bottom:
+                1px solid
+                rgba(0, 246, 255, 0.18);
+        }
+
+        td {
+
+            padding: 16px;
+
+            text-align: center;
+
+            color: #c4dbe1;
+
+            border-bottom:
+                1px solid
+                rgba(0, 246, 255, 0.07);
+        }
+
+        tbody tr {
+
+            transition: 0.3s;
+        }
+
+        tbody tr:hover {
+
+            background:
+                rgba(0, 246, 255, 0.04);
+        }
+
+        tbody tr.current {
+
+            background:
+                rgba(0, 246, 255, 0.13);
+
+            box-shadow:
+                inset 4px 0 #00f6ff;
+        }
+
+        .binary {
+
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 34px;
+            height: 34px;
+
+            border-radius: 50%;
+
+            font-weight: bold;
+
+            background:
+                rgba(110, 130, 140, 0.1);
+
+            border:
+                1px solid
+                rgba(110, 150, 160, 0.25);
+        }
+
+        .binary.one {
+
+            color: #00f6ff;
+
+            border-color: #00f6ff;
+
+            background:
+                rgba(0, 246, 255, 0.09);
+
+            box-shadow:
+                0 0 12px
+                rgba(0, 246, 255, 0.12);
+        }
+
+        /* =========================
+           INTERACTIVE TESTER
+        ========================= */
+
+        .tester {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 20px;
+
+            align-items: center;
+
+            margin-top: 30px;
+        }
+
+        .input-card {
+
+            text-align: center;
+
+            padding: 24px;
+
+            border-radius: 16px;
+
+            background:
+                rgba(0, 246, 255, 0.035);
+
+            border:
+                1px solid
+                rgba(0, 246, 255, 0.12);
+        }
+
+        .input-card h3 {
+
+            color: #9fc4ce;
+
+            margin-bottom: 15px;
+        }
+
+        .big-switch {
+
+            width: 70px;
+
+            height: 36px;
+
+            margin: auto;
+
+            border-radius: 30px;
+
+            background: #16282e;
+
+            border:
+                1px solid
+                #40545b;
+
+            cursor: pointer;
+
+            position: relative;
+
+            transition: 0.3s;
+        }
+
+        .big-switch::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 26px;
+            height: 26px;
+
+            left: 4px;
+            top: 4px;
+
+            border-radius: 50%;
+
+            background: #70858c;
+
+            transition: 0.3s;
+        }
+
+        .big-switch.on {
+
+            background:
+                rgba(0, 246, 255, 0.15);
+
+            border-color:
+                #00f6ff;
+        }
+
+        .big-switch.on::before {
+
+            left: 38px;
+
+            background: #00f6ff;
+
+            box-shadow:
+                0 0 15px #00f6ff;
+        }
+
+        .switch-value {
+
+            display: block;
+
+            margin-top: 10px;
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            color: #738c94;
+        }
+
+        .switch-value.on {
+
+            color: #00f6ff;
+        }
+
+        .tester-result {
+
+            text-align: center;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            background:
+                rgba(0, 246, 255, 0.04);
+
+            border:
+                1px solid
+                rgba(0, 246, 255, 0.15);
+        }
+
+        .tester-result small {
+
+            color: #7898a2;
+
+            display: block;
+
+            margin-bottom: 10px;
+        }
+
+        .result-value {
+
+            font-size: 46px;
+
+            font-weight: bold;
+
+            color: #7c9198;
+
+            transition: 0.3s;
+        }
+
+        .result-value.on {
+
+            color: #00f6ff;
+
+            text-shadow:
+                0 0 20px
+                rgba(0, 246, 255, 0.5);
+        }
+
+        .expression {
+
+            margin-top: 12px;
+
+            color: #a9c6ce;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           STATISTICS
+        ========================= */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 16px;
+
+            margin-top: 25px;
+        }
+
+        .stat {
+
+            text-align: center;
+
+            padding: 22px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255,255,255,0.025);
+
+            border:
+                1px solid
+                rgba(0,246,255,0.09);
+        }
+
+        .stat-number {
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            color: #00f6ff;
+
+            margin-bottom: 7px;
+        }
+
+        .stat-label {
+
+            color: #79959e;
+
+            font-size: 13px;
+        }
+
+        /* =========================
+           VERIFICATION
+        ========================= */
+
+        .verification {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 15px;
+
+            padding: 18px 20px;
+
+            margin-top: 25px;
+
+            border-radius: 13px;
+
+            border:
+                1px solid
+                rgba(0,246,255,0.15);
+
+            background:
+                rgba(0,246,255,0.035);
+        }
+
+        .verification-icon {
+
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            justify-content: center;
+            align-items: center;
+
+            background:
+                rgba(0,246,255,0.1);
+
+            color: #00f6ff;
+
+            font-size: 20px;
+        }
+
+        .verification strong {
+
+            color: #00f6ff;
+
+            display: block;
+
+            margin-bottom: 4px;
+        }
+
+        .verification span {
+
+            color: #8faab2;
+
+            font-size: 13px;
+        }
+
+        /* =========================
+           EXPLANATION CARDS
+        ========================= */
+
+        .explanation-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+        .explanation-card {
+
+            padding: 24px;
+
+            border-radius: 17px;
+
+            background:
+                rgba(0, 246, 255, 0.035);
+
+            border:
+                1px solid
+                rgba(0,246,255,0.12);
+        }
+
+        .explanation-card .icon {
+
+            font-size: 28px;
+
+            margin-bottom: 12px;
+        }
+
+        .explanation-card h3 {
+
+            color: #00f6ff;
+
+            margin-bottom: 9px;
+        }
+
+        .explanation-card p {
+
+            color: #99b5bd;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+        }
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .page-navigation {
+
+            display: flex;
+
+            justify-content:
+                space-between;
+
+            gap: 20px;
+
+            margin-top: 45px;
+        }
+
+        .page-navigation a {
+
+            text-decoration: none;
+
+            padding: 14px 24px;
+
+            border:
+                1px solid
+                rgba(0,246,255,0.25);
+
+            border-radius: 10px;
+
+            color: #00f6ff;
+
+            transition: 0.3s;
+        }
+
+        .page-navigation a:hover {
+
+            background:
+                rgba(0,246,255,0.1);
+
+            box-shadow:
+                0 0 18px
+                rgba(0,246,255,0.12);
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+
+            text-align: center;
+
+            padding: 30px 20px;
+
+            border-top:
+                1px solid
+                rgba(0,246,255,0.1);
+
+            color: #688792;
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media (max-width: 950px) {
+
+            header {
+
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+            nav {
+
+                justify-content: center;
+            }
+
+            .gate-controls {
+
+                grid-template-columns:
+                    repeat(4, 1fr);
+            }
+
+            .gate-info {
+
+                grid-template-columns: 1fr;
+            }
+
+            .tester {
+
+                grid-template-columns: 1fr;
+            }
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .explanation-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            main {
+
+                width: 94%;
+
+                padding: 45px 0;
+            }
+
+            .panel {
+
+                padding: 20px;
+            }
+
+            .gate-controls {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+            .stats {
+
+                grid-template-columns: 1fr;
+            }
+
+            .page-navigation {
+
+                flex-direction: column;
+            }
+
+            .page-navigation a {
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+    <div class="logo">
+        ⚡ LogicFlow
+    </div>
+
+
+    <nav>
+
+        <a href="index.html">
+            Home
+        </a>
+
+        <a href="about.html">
+            About
+        </a>
+
+        <a href="simulator.html">
+            Simulator
+        </a>
+
+        <a href="datapath.html">
+            Data Path
+        </a>
+
+        <a href="signals.html">
+            Signals
+        </a>
+
+        <a href="timing.html">
+            Timing
+        </a>
+
+        <a
+            href="truth-table.html"
+            class="active"
+        >
+            Truth Table
+        </a>
+
+        <a href="simulation.html">
+            Simulation
+        </a>
+
+        <a href="conclusion.html">
+            Conclusion
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<main>
+
+
+<!-- =========================
+     HERO
+========================= -->
+
+<section class="hero">
+
+    <span>
+        LOGIC VERIFICATION SYSTEM
+    </span>
+
+    <h1>
+        Truth Table
+    </h1>
+
+    <p>
+        Explore and verify the behavior of digital logic gates
+        using automatically generated truth tables and an
+        interactive logic tester.
+    </p>
+
+</section>
+
+
+
+<!-- =========================
+     TRUTH TABLE LAB
+========================= -->
+
+<section class="panel">
+
+    <h2>
+        🧠 Interactive Truth Table Lab
+    </h2>
+
+    <p class="description">
+        Select any logic gate below. The truth table,
+        expression, explanation and verification results
+        will update automatically.
+    </p>
+
+
+    <!-- GATE BUTTONS -->
+
+    <div class="gate-controls">
+
+        <button
+            class="gate-btn active"
+            data-gate="AND"
+        >
+            AND
+        </button>
+
+        <button
+            class="gate-btn"
+            data-gate="OR"
+        >
+            OR
+        </button>
+
+        <button
+            class="gate-btn"
+            data-gate="NAND"
+        >
+            NAND
+        </button>
+
+        <button
+            class="gate-btn"
+            data-gate="NOR"
+        >
+            NOR
+        </button>
+
+        <button
+            class="gate-btn"
+            data-gate="XOR"
+        >
+            XOR
+        </button>
+
+        <button
+            class="gate-btn"
+            data-gate="XNOR"
+        >
+            XNOR
+        </button>
+
+        <button
+            class="gate-btn"
+            data-gate="NOT"
+        >
+            NOT
+        </button>
+
+    </div>
+
+
+
+    <!-- GATE INFORMATION -->
+
+    <div class="gate-info">
+
+        <div class="info-box">
+
+            <small>
+                Selected Gate
+            </small>
+
+            <strong id="selectedGate">
+                AND Gate
+            </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <small>
+                Logic Expression
+            </small>
+
+            <strong id="expression">
+                Y = A · B
+            </strong>
+
+        </div>
+
+
+        <div class="info-box">
+
+            <small>
+                Gate Function
+            </small>
+
+            <p id="functionText">
+                Output is HIGH only when
+                both inputs are HIGH.
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- TABLE -->
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Input A
+                    </th>
+
+                    <th id="inputBHeader">
+                        Input B
+                    </th>
+
+                    <th id="outputHeader">
+                        AND Output
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="truthBody">
+            </tbody>
+
+        </table>
+
+    </div>
+
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats">
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                id="totalRows"
+            >
+                4
+            </div>
+
+            <div class="stat-label">
+                Input Combinations
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                id="highRows"
+            >
+                1
+            </div>
+
+            <div class="stat-label">
+                HIGH Outputs
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                id="lowRows"
+            >
+                3
+            </div>
+
+            <div class="stat-label">
+                LOW Outputs
+            </div>
+
+        </div>
+
+
+        <div class="stat">
+
+            <div
+                class="stat-number"
+                id="gateType"
+            >
+                2
+            </div>
+
+            <div class="stat-label">
+                Input Logic
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- VERIFICATION -->
+
+    <div class="verification">
+
+        <div class="verification-icon">
+            ✓
+        </div>
+
+        <div>
+
+            <strong>
+                Truth Table Verified
+            </strong>
+
+            <span id="verificationText">
+                The generated output values match
+                the selected AND logic operation.
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     INTERACTIVE TESTER
+========================= -->
+
+<section class="panel">
+
+    <h2>
+        ⚡ Live Logic Tester
+    </h2>
+
+    <p class="description">
+        Change the inputs and observe the output instantly.
+        This tester uses the same logic operation selected above.
+    </p>
+
+
+    <div class="tester">
+
+
+        <!-- INPUT A -->
+
+        <div class="input-card">
+
+            <h3>
+                Input A
+            </h3>
+
+            <div
+                class="big-switch"
+                id="testSwitchA"
+                role="button"
+                tabindex="0"
+                aria-label="Toggle Input A"
+            ></div>
+
+            <span
+                class="switch-value"
+                id="testValueA"
+            >
+                0
+            </span>
+
+        </div>
+
+
+
+        <!-- RESULT -->
+
+        <div class="tester-result">
+
+            <small>
+                CURRENT OUTPUT
+            </small>
+
+            <div
+                class="result-value"
+                id="testOutput"
+            >
+                0
+            </div>
+
+            <div
+                class="expression"
+                id="testExpression"
+            >
+                0 AND 0 = 0
+            </div>
+
+        </div>
+
+
+
+        <!-- INPUT B -->
+
+        <div
+            class="input-card"
+            id="inputBCard"
+        >
+
+            <h3>
+                Input B
+            </h3>
+
+            <div
+                class="big-switch"
+                id="testSwitchB"
+                role="button"
+                tabindex="0"
+                aria-label="Toggle Input B"
+            ></div>
+
+            <span
+                class="switch-value"
+                id="testValueB"
+            >
+                0
+            </span>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     EXPLANATION
+========================= -->
+
+<section class="panel">
+
+    <h2>
+        📚 Understanding Truth Tables
+    </h2>
+
+    <div class="explanation-grid">
+
+
+        <div class="explanation-card">
+
+            <div class="icon">
+                🔢
+            </div>
+
+            <h3>
+                Binary Inputs
+            </h3>
+
+            <p>
+                Digital circuits use binary values.
+                Logic 0 represents LOW and logic 1
+                represents HIGH.
+            </p>
+
+        </div>
+
+
+        <div class="explanation-card">
+
+            <div class="icon">
+                🔄
+            </div>
+
+            <h3>
+                All Combinations
+            </h3>
+
+            <p>
+                A truth table lists every possible
+                combination of input values and
+                calculates the corresponding output.
+            </p>
+
+        </div>
+
+
+        <div class="explanation-card">
+
+            <div class="icon">
+                🎯
+            </div>
+
+            <h3>
+                Logic Verification
+            </h3>
+
+            <p>
+                Engineers use truth tables to verify
+                whether a digital circuit behaves
+                according to its intended logic.
+            </p>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================
+     NAVIGATION
+========================= -->
+
+<div class="page-navigation">
+
+    <a href="timing.html">
+        ← Previous: Timing
+    </a>
+
+    <a href="simulation.html">
+        Next: Simulation →
+    </a>
+
+</div>
+
+
+</main>
+
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    Digital Logic Simulator • LogicFlow
+
+    <br>
+
+    Interactive Truth Table & Logic Verification System
+
+</footer>
+
+
+
+<script>
+
+
+/* =========================
+   GATE DATA
+========================= */
+
+const gates = {
+
+    AND: {
+
+        expression: "Y = A · B",
+
+        description:
+            "Output is HIGH only when both inputs are HIGH.",
+
+        calculate: function(a, b) {
+            return a && b;
+        }
+
+    },
+
+
+    OR: {
+
+        expression: "Y = A + B",
+
+        description:
+            "Output is HIGH when at least one input is HIGH.",
+
+        calculate: function(a, b) {
+            return a || b;
+        }
+
+    },
+
+
+    NAND: {
+
+        expression: "Y = NOT(A · B)",
+
+        description:
+            "Output is LOW only when both inputs are HIGH.",
+
+        calculate: function(a, b) {
+            return !(a && b);
+        }
+
+    },
+
+
+    NOR: {
+
+        expression: "Y = NOT(A + B)",
+
+        description:
+            "Output is HIGH only when both inputs are LOW.",
+
+        calculate: function(a, b) {
+            return !(a || b);
+        }
+
+    },
+
+
+    XOR: {
+
+        expression: "Y = A ⊕ B",
+
+        description:
+            "Output is HIGH when the two inputs are different.",
+
+        calculate: function(a, b) {
+            return a !== b;
+        }
+
+    },
+
+
+    XNOR: {
+
+        expression: "Y = NOT(A ⊕ B)",
+
+        description:
+            "Output is HIGH when the two inputs are the same.",
+
+        calculate: function(a, b) {
+            return a === b;
+        }
+
+    },
+
+
+    NOT: {
+
+        expression: "Y = NOT(A)",
+
+        description:
+            "The NOT gate reverses the input signal.",
+
+        calculate: function(a) {
+            return !a;
+        }
+
+    }
+
+};
+
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+let selectedGate = "AND";
+
+let testA = 0;
+
+let testB = 0;
+
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const gateButtons =
+    document.querySelectorAll(".gate-btn");
+
+const truthBody =
+    document.getElementById("truthBody");
+
+const selectedGateText =
+    document.getElementById("selectedGate");
+
+const expressionText =
+    document.getElementById("expression");
+
+const functionText =
+    document.getElementById("functionText");
+
+const outputHeader =
+    document.getElementById("outputHeader");
+
+const inputBHeader =
+    document.getElementById("inputBHeader");
+
+const inputBCard =
+    document.getElementById("inputBCard");
+
+const testSwitchA =
+    document.getElementById("testSwitchA");
+
+const testSwitchB =
+    document.getElementById("testSwitchB");
+
+const testValueA =
+    document.getElementById("testValueA");
+
+const testValueB =
+    document.getElementById("testValueB");
+
+const testOutput =
+    document.getElementById("testOutput");
+
+const testExpression =
+    document.getElementById("testExpression");
+
+
+
+/* =========================
+   CREATE TRUTH TABLE
+========================= */
+
+function generateTruthTable() {
+
+    truthBody.innerHTML = "";
+
+    let combinations;
+
+    if (selectedGate === "NOT") {
+
+        combinations = [
+            [0],
+            [1]
+        ];
+
+    } else {
+
+        combinations = [
+            [0, 0],
+            [0, 1],
+            [1, 0],
+            [1, 1]
+        ];
+
+    }
+
+
+    combinations.forEach(function(values) {
+
+        const a = values[0];
+
+        const b = values[1];
+
+        const result =
+            gates[selectedGate]
+            .calculate(a, b)
+            ? 1
+            : 0;
+
+
+        const row =
+            document.createElement("tr");
+
+
+        row.dataset.a = a;
+
+        if (selectedGate !== "NOT") {
+
+            row.dataset.b = b;
+
+        }
+
+
+        const cellA =
+            document.createElement("td");
+
+        cellA.innerHTML =
+            `<span class="binary ${a ? "one" : ""}">
+                ${a}
+             </span>`;
+
+
+        row.appendChild(cellA);
+
+
+        if (selectedGate !== "NOT") {
+
+            const cellB =
+                document.createElement("td");
+
+            cellB.innerHTML =
+                `<span class="binary ${b ? "one" : ""}">
+                    ${b}
+                 </span>`;
+
+            row.appendChild(cellB);
+
+        }
+
+
+        const cellOutput =
+            document.createElement("td");
+
+        cellOutput.innerHTML =
+            `<span class="binary ${result ? "one" : ""}">
+                ${result}
+             </span>`;
+
+
+        row.appendChild(cellOutput);
+
+
+        truthBody.appendChild(row);
+
+    });
+
+
+    updateCurrentRow();
+
+}
+
+
+
+/* =========================
+   UPDATE CURRENT ROW
+========================= */
+
+function updateCurrentRow() {
+
+    const rows =
+        truthBody.querySelectorAll("tr");
+
+
+    rows.forEach(function(row) {
+
+        const a =
+            Number(row.dataset.a);
+
+        const b =
+            row.dataset.b !== undefined
+                ? Number(row.dataset.b)
+                : null;
+
+
+        const match =
+            selectedGate === "NOT"
+                ? a === testA
+                : a === testA && b === testB;
+
+
+        row.classList.toggle(
+            "current",
+            match
+        );
+
+    });
+
+}
+
+
+
+/* =========================
+   UPDATE GATE INFORMATION
+========================= */
+
+function updateGateInformation() {
+
+    const data =
+        gates[selectedGate];
+
+
+    selectedGateText.textContent =
+        selectedGate + " Gate";
+
+
+    expressionText.textContent =
+        data.expression;
+
+
+    functionText.textContent =
+        data.description;
+
+
+    outputHeader.textContent =
+        selectedGate + " Output";
+
+
+    if (selectedGate === "NOT") {
+
+        inputBHeader.style.display = "none";
+
+        inputBCard.style.opacity = "0.35";
+
+        inputBCard.style.pointerEvents = "none";
+
+    } else {
+
+        inputBHeader.style.display = "table-cell";
+
+        inputBCard.style.opacity = "1";
+
+        inputBCard.style.pointerEvents = "auto";
+
+    }
+
+
+    updateStatistics();
+
+}
+
+
+
+/* =========================
+   UPDATE STATISTICS
+========================= */
+
+function updateStatistics() {
+
+    const rows =
+        truthBody.querySelectorAll("tr");
+
+
+    let high = 0;
+
+    let low = 0;
+
+
+    rows.forEach(function(row) {
+
+        const output =
+            Number(
+                row.lastElementChild
+                    .querySelector(".binary")
+                    .textContent
+                    .trim()
+            );
+
+
+        if (output === 1) {
+
+            high++;
+
+        } else {
+
+            low++;
+
+        }
+
+    });
+
+
+    document.getElementById("totalRows")
+        .textContent = rows.length;
+
+
+    document.getElementById("highRows")
+        .textContent = high;
+
+
+    document.getElementById("lowRows")
+        .textContent = low;
+
+
+    document.getElementById("gateType")
+        .textContent =
+            selectedGate === "NOT"
+                ? "1"
+                : "2";
+
+
+    document.getElementById(
+        "verificationText"
+    ).textContent =
+        `The generated output values match the selected ${selectedGate} logic operation.`;
+
+}
+
+
+
+/* =========================
+   UPDATE TESTER
+========================= */
+
+function updateTester() {
+
+    const output =
+        gates[selectedGate]
+            .calculate(testA, testB)
+            ? 1
+            : 0;
+
+
+    /* Switches */
+
+    testSwitchA.classList.toggle(
+        "on",
+        testA === 1
+    );
+
+
+    testSwitchB.classList.toggle(
+        "on",
+        testB === 1
+    );
+
+
+    /* Values */
+
+    testValueA.textContent =
+        testA;
+
+
+    testValueB.textContent =
+        testB;
+
+
+    testValueA.classList.toggle(
+        "on",
+        testA === 1
+    );
+
+
+    testValueB.classList.toggle(
+        "on",
+        testB === 1
+    );
+
+
+    /* Output */
+
+    testOutput.textContent =
+        output;
+
+
+    testOutput.classList.toggle(
+        "on",
+        output === 1
+    );
+
+
+    /* Expression */
+
+    if (selectedGate === "NOT") {
+
+        testExpression.textContent =
+            `NOT ${testA} = ${output}`;
+
+    } else {
+
+        testExpression.textContent =
+            `${testA} ${selectedGate} ${testB} = ${output}`;
+
+    }
+
+
+    updateCurrentRow();
+
+}
+
+
+
+/* =========================
+   GATE BUTTONS
+========================= */
+
+gateButtons.forEach(function(button) {
+
+    button.addEventListener(
+        "click",
+        function() {
+
+            selectedGate =
+                this.dataset.gate;
+
+
+            gateButtons.forEach(function(btn) {
+
+                btn.classList.remove("active");
+
+            });
+
+
+            this.classList.add("active");
+
+
+            generateTruthTable();
+
+            updateGateInformation();
+
+            updateTester();
+
+        }
+    );
+
+});
+
+
+
+/* =========================
+   INPUT A
+========================= */
+
+function toggleA() {
+
+    testA =
+        testA === 0
+            ? 1
+            : 0;
+
+
+    updateTester();
+
+}
+
+
+testSwitchA.addEventListener(
+    "click",
+    toggleA
+);
+
+
+testSwitchA.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" ||
+            event.key === " "
+        ) {
+
+            event.preventDefault();
+
+            toggleA();
+
+        }
+
+    }
+);
+
+
+
+/* =========================
+   INPUT B
+========================= */
+
+function toggleB() {
+
+    testB =
+        testB === 0
+            ? 1
+            : 0;
+
+
+    updateTester();
+
+}
+
+
+testSwitchB.addEventListener(
+    "click",
+    toggleB
+);
+
+
+testSwitchB.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Enter" ||
+            event.key === " "
+        ) {
+
+            event.preventDefault();
+
+            toggleB();
+
+        }
+
+    }
+);
+
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+generateTruthTable();
+
+updateGateInformation();
+
+updateTester();
+
+</script>
+
+
+</body>
+</html>

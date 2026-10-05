@@ -1,0 +1,598 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Control Unit Analyzer</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background: #07111f;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ---------- NAVBAR ---------- */
+
+        nav {
+            height: 75px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 7%;
+            background: rgba(5, 15, 30, 0.92);
+            border-bottom: 1px solid rgba(0, 210, 255, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            color: #00d9ff;
+            letter-spacing: 1px;
+        }
+
+        .logo span {
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: #b9c8d8;
+            text-decoration: none;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00d9ff;
+        }
+
+
+        /* ---------- BACKGROUND CIRCUIT ---------- */
+
+        .circuit {
+            position: absolute;
+            inset: 75px 0 0 0;
+            overflow: hidden;
+            z-index: 0;
+            opacity: 0.45;
+        }
+
+        .line {
+            position: absolute;
+            background: #00bfff;
+            opacity: 0.25;
+        }
+
+        .line1 {
+            width: 1px;
+            height: 100%;
+            left: 15%;
+        }
+
+        .line2 {
+            width: 1px;
+            height: 100%;
+            left: 50%;
+        }
+
+        .line3 {
+            width: 1px;
+            height: 100%;
+            left: 82%;
+        }
+
+        .line4 {
+            height: 1px;
+            width: 100%;
+            top: 25%;
+        }
+
+        .line5 {
+            height: 1px;
+            width: 100%;
+            top: 72%;
+        }
+
+        .node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #00d9ff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00d9ff;
+            animation: pulse 2s infinite;
+        }
+
+        .node1 {
+            top: 25%;
+            left: 15%;
+        }
+
+        .node2 {
+            top: 25%;
+            left: 50%;
+        }
+
+        .node3 {
+            top: 72%;
+            left: 50%;
+        }
+
+        .node4 {
+            top: 72%;
+            left: 82%;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.8);
+                opacity: 1;
+            }
+        }
+
+
+        /* ---------- HERO ---------- */
+
+        .hero {
+            position: relative;
+            z-index: 2;
+            min-height: calc(100vh - 75px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 60px 8%;
+            gap: 50px;
+        }
+
+        .hero-content {
+            width: 55%;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 8px 16px;
+            border: 1px solid rgba(0, 217, 255, 0.5);
+            border-radius: 20px;
+            color: #00d9ff;
+            font-size: 13px;
+            margin-bottom: 22px;
+            background: rgba(0, 217, 255, 0.05);
+        }
+
+        h1 {
+            font-size: clamp(40px, 5vw, 70px);
+            line-height: 1.08;
+            margin-bottom: 22px;
+        }
+
+        h1 span {
+            color: #00d9ff;
+        }
+
+        .description {
+            color: #aab9c8;
+            font-size: 17px;
+            line-height: 1.8;
+            max-width: 650px;
+            margin-bottom: 30px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .primary-btn {
+            background: #00d9ff;
+            color: #03101b;
+            border: none;
+            font-weight: 700;
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid #334b61;
+        }
+
+        .secondary-btn:hover {
+            border-color: #00d9ff;
+            color: #00d9ff;
+        }
+
+
+        /* ---------- CPU CARD ---------- */
+
+        .cpu-section {
+            width: 40%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .cpu-card {
+            width: 360px;
+            min-height: 360px;
+            border: 1px solid rgba(0, 217, 255, 0.35);
+            background: rgba(10, 27, 45, 0.8);
+            border-radius: 18px;
+            padding: 30px;
+            box-shadow:
+                0 0 40px rgba(0, 217, 255, 0.08),
+                inset 0 0 30px rgba(0, 217, 255, 0.03);
+            backdrop-filter: blur(10px);
+        }
+
+        .cpu-title {
+            text-align: center;
+            color: #8da5ba;
+            font-size: 13px;
+            margin-bottom: 25px;
+            letter-spacing: 2px;
+        }
+
+        .control-unit {
+            border: 2px solid #00d9ff;
+            border-radius: 12px;
+            padding: 25px 15px;
+            text-align: center;
+            color: #00d9ff;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.15);
+            position: relative;
+        }
+
+        .control-unit small {
+            display: block;
+            color: #91a7ba;
+            font-size: 11px;
+            font-weight: normal;
+            margin-top: 7px;
+        }
+
+        .signal-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+            gap: 8px;
+        }
+
+        .signal {
+            flex: 1;
+            padding: 12px 5px;
+            border-radius: 8px;
+            background: #0d2033;
+            border: 1px solid #203c53;
+            text-align: center;
+            font-size: 11px;
+            color: #b9c8d8;
+        }
+
+        .led {
+            width: 7px;
+            height: 7px;
+            background: #00d9ff;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            box-shadow: 0 0 10px #00d9ff;
+        }
+
+        .flow {
+            text-align: center;
+            color: #00d9ff;
+            margin: 18px 0;
+            font-size: 20px;
+            animation: moveArrow 1.5s infinite;
+        }
+
+        @keyframes moveArrow {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(6px);
+            }
+        }
+
+
+        /* ---------- BOTTOM INFO ---------- */
+
+        .info {
+            position: absolute;
+            bottom: 25px;
+            left: 8%;
+            display: flex;
+            gap: 35px;
+            z-index: 3;
+        }
+
+        .info-item {
+            color: #71869a;
+            font-size: 12px;
+        }
+
+        .info-item strong {
+            display: block;
+            color: #d8e5ef;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+
+        /* ---------- RESPONSIVE ---------- */
+
+        @media (max-width: 900px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 50px;
+            }
+
+            .hero-content,
+            .cpu-section {
+                width: 100%;
+            }
+
+            .description {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .buttons {
+                justify-content: center;
+            }
+
+            .cpu-card {
+                width: min(360px, 90vw);
+            }
+
+            .info {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVIGATION -->
+
+    <nav>
+
+        <div class="logo">
+            CPU<span>CONTROL</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="simulator.html">Simulator</a>
+            <a href="datapath.html">Datapath</a>
+        </div>
+
+    </nav>
+
+
+    <!-- CIRCUIT BACKGROUND -->
+
+    <div class="circuit">
+
+        <div class="line line1"></div>
+        <div class="line line2"></div>
+        <div class="line line3"></div>
+
+        <div class="line line4"></div>
+        <div class="line line5"></div>
+
+        <div class="node node1"></div>
+        <div class="node node2"></div>
+        <div class="node node3"></div>
+        <div class="node node4"></div>
+
+    </div>
+
+
+    <!-- MAIN HERO -->
+
+    <main class="hero">
+
+        <section class="hero-content">
+
+            <div class="tag">
+                PROCESSOR ARCHITECTURE • INTERACTIVE SIMULATION
+            </div>
+
+            <h1>
+                Processor <br>
+                <span>Control Unit</span>
+            </h1>
+
+            <p class="description">
+
+                Explore how a processor generates and controls
+                signals for different instructions through an
+                interactive control unit simulator.
+
+                Analyze instructions, visualize datapath activity,
+                and understand how control signals drive the CPU.
+
+            </p>
+
+
+            <div class="buttons">
+
+                <button class="primary-btn"
+                        onclick="startSimulator()">
+
+                    ▶ Start Simulation
+
+                </button>
+
+                <button class="secondary-btn"
+                        onclick="goAbout()">
+
+                    Learn More →
+
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- CPU VISUAL -->
+
+        <section class="cpu-section">
+
+            <div class="cpu-card">
+
+                <div class="cpu-title">
+                    CONTROL UNIT • LIVE STATUS
+                </div>
+
+                <div class="control-unit">
+
+                    CONTROL UNIT
+
+                    <small>
+                        Instruction Decoder & Signal Generator
+                    </small>
+
+                </div>
+
+                <div class="flow">
+                    ↓
+                </div>
+
+                <div class="signal-row">
+
+                    <div class="signal">
+                        <span class="led"></span>
+                        RegWrite
+                    </div>
+
+                    <div class="signal">
+                        <span class="led"></span>
+                        ALUSrc
+                    </div>
+
+                    <div class="signal">
+                        <span class="led"></span>
+                        MemRead
+                    </div>
+
+                </div>
+
+                <div class="flow">
+                    ↓
+                </div>
+
+                <div class="signal-row">
+
+                    <div class="signal">
+                        <span class="led"></span>
+                        ALU
+                    </div>
+
+                    <div class="signal">
+                        <span class="led"></span>
+                        Memory
+                    </div>
+
+                    <div class="signal">
+                        <span class="led"></span>
+                        WriteBack
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- BOTTOM INFORMATION -->
+
+    <div class="info">
+
+        <div class="info-item">
+            <strong>6+</strong>
+            Instructions
+        </div>
+
+        <div class="info-item">
+            <strong>8+</strong>
+            Control Signals
+        </div>
+
+        <div class="info-item">
+            <strong>Interactive</strong>
+            Datapath Analysis
+        </div>
+
+    </div>
+
+
+    <script>
+
+        function startSimulator() {
+            window.location.href = "simulator.html";
+        }
+
+        function goAbout() {
+            window.location.href = "about.html";
+        }
+
+    </script>
+
+</body>
+</html>
+```
+

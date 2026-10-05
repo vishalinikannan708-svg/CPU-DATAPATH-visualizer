@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signals | Digital Logic Simulator</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #eafaff;
+            min-height: 100vh;
+            overflow-x: hidden;
+
+            background:
+                radial-gradient(circle at 20% 20%, rgba(0, 255, 255, 0.12), transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(0, 140, 255, 0.12), transparent 30%),
+                linear-gradient(135deg, #020617, #031827, #00111f);
+        }
+
+        /* Animated background */
+        .background {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .grid {
+            position: absolute;
+            inset: 0;
+
+            background-image:
+                linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+
+            background-size: 45px 45px;
+            animation: gridMove 12s linear infinite;
+        }
+
+        @keyframes gridMove {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(45px);
+            }
+        }
+
+        .circle {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border: 1px solid rgba(0,255,255,0.18);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .circle.one {
+            top: 10%;
+            left: 5%;
+        }
+
+        .circle.two {
+            right: 5%;
+            bottom: 10%;
+            width: 280px;
+            height: 280px;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-25px) scale(1.05);
+            }
+        }
+
+        /* Header */
+        header {
+            width: 100%;
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            background: rgba(2, 15, 30, 0.78);
+            backdrop-filter: blur(12px);
+
+            border-bottom: 1px solid rgba(0,255,255,0.15);
+
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 23px;
+            font-weight: bold;
+            color: #00f6ff;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        nav a {
+            color: #b9eaff;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: #00f6ff;
+            text-shadow: 0 0 10px #00f6ff;
+        }
+
+        /* Main */
+        .container {
+            width: 88%;
+            max-width: 1200px;
+            margin: auto;
+            padding: 70px 0;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            color: #00f6ff;
+            text-shadow: 0 0 18px rgba(0,246,255,0.5);
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            color: #b7dce8;
+            max-width: 800px;
+            margin: auto;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        /* Signal Cards */
+        .signal-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .signal-card {
+            background: rgba(5, 24, 42, 0.82);
+            border: 1px solid rgba(0,246,255,0.18);
+            border-radius: 18px;
+            padding: 28px;
+
+            box-shadow:
+                0 0 25px rgba(0, 200, 255, 0.06);
+
+            transition: 0.35s;
+        }
+
+        .signal-card:hover {
+            transform: translateY(-7px);
+            border-color: rgba(0,246,255,0.6);
+
+            box-shadow:
+                0 0 30px rgba(0,246,255,0.13);
+        }
+
+        .signal-card h2 {
+            color: #00f6ff;
+            margin-bottom: 12px;
+            font-size: 23px;
+        }
+
+        .signal-card p {
+            color: #c2e5ed;
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* Signal visual */
+        .signal-box {
+            margin-top: 22px;
+            padding: 20px;
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            border: 1px solid rgba(0,246,255,0.1);
+        }
+
+        .signal-line {
+            height: 60px;
+            position: relative;
+            margin-top: 10px;
+        }
+
+        .signal-line::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 30px;
+            height: 2px;
+            background: rgba(0,246,255,0.2);
+        }
+
+        .wave {
+            position: absolute;
+            left: 0;
+            top: 5px;
+            width: 100%;
+            height: 45px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent 0 8%,
+                    #00f6ff 8% 9%,
+                    transparent 9% 18%,
+                    #00f6ff 18% 19%,
+                    transparent 19% 28%,
+                    #00f6ff 28% 29%,
+                    transparent 29% 38%,
+                    #00f6ff 38% 39%,
+                    transparent 39% 48%,
+                    #00f6ff 48% 49%,
+                    transparent 49% 58%,
+                    #00f6ff 58% 59%,
+                    transparent 59% 68%,
+                    #00f6ff 68% 69%,
+                    transparent 69% 78%,
+                    #00f6ff 78% 79%,
+                    transparent 79% 88%,
+                    #00f6ff 88% 89%,
+                    transparent 89%
+                );
+
+            opacity: 0.8;
+            animation: pulseSignal 2s linear infinite;
+        }
+
+        @keyframes pulseSignal {
+            0% {
+                transform: translateX(-20px);
+                opacity: 0.4;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(20px);
+                opacity: 0.4;
+            }
+        }
+
+        /* Signal table */
+        .table-section {
+            margin-top: 50px;
+        }
+
+        .table-section h2 {
+            text-align: center;
+            color: #00f6ff;
+            margin-bottom: 25px;
+            font-size: 30px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 15px;
+            border: 1px solid rgba(0,246,255,0.15);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(3, 20, 35, 0.8);
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,246,255,0.1);
+        }
+
+        th {
+            color: #00f6ff;
+            background: rgba(0,246,255,0.07);
+        }
+
+        td {
+            color: #c5e6ee;
+        }
+
+        tr:hover td {
+            background: rgba(0,246,255,0.04);
+        }
+
+        /* Bottom navigation */
+        .navigation {
+            margin-top: 55px;
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 25px;
+            border-radius: 30px;
+            border: 1px solid #00f6ff;
+
+            color: #00f6ff;
+            text-decoration: none;
+
+            background: rgba(0,246,255,0.05);
+
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #00f6ff;
+            color: #00111f;
+            box-shadow: 0 0 20px rgba(0,246,255,0.5);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            border-top: 1px solid rgba(0,246,255,0.12);
+            color: #7fb5c2;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+
+            header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            nav {
+                justify-content: center;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .signal-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navigation {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Animated Background -->
+    <div class="background">
+        <div class="grid"></div>
+        <div class="circle one"></div>
+        <div class="circle two"></div>
+    </div>
+
+    <!-- Header -->
+    <header>
+
+        <div class="logo">
+            LogicFlow
+        </div>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="simulator.html">Simulator</a>
+            <a href="datapath.html">Data Path</a>
+            <a href="signals.html" class="active">Signals</a>
+            <a href="timing.html">Timing</a>
+            <a href="truth-table.html">Truth Table</a>
+            <a href="simulation.html">Simulation</a>
+            <a href="conclusion.html">Conclusion</a>
+        </nav>
+
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <section class="hero">
+
+            <h1>Control & Data Signals</h1>
+
+            <p>
+                Signals are the communication paths that control and coordinate
+                the flow of information inside a digital logic system.
+                They determine when data is transferred, processed, stored,
+                or passed to another functional unit.
+            </p>
+
+        </section>
+
+
+        <!-- Signal Cards -->
+        <section class="signal-grid">
+
+            <div class="signal-card">
+
+                <h2>Input Signals</h2>
+
+                <p>
+                    Input signals provide the initial binary information
+                    required by the digital system. They may represent
+                    user inputs, sensor values, control commands, or data
+                    received from another circuit.
+                </p>
+
+                <div class="signal-box">
+
+                    <strong>Binary Input</strong>
+
+                    <div class="signal-line">
+                        <div class="wave"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="signal-card">
+
+                <h2>Control Signals</h2>
+
+                <p>
+                    Control signals determine how different components
+                    operate. They enable or disable specific operations
+                    and coordinate the movement of data between system
+                    components.
+                </p>
+
+                <div class="signal-box">
+
+                    <strong>Control Enable</strong>
+
+                    <div class="signal-line">
+                        <div class="wave"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="signal-card">
+
+                <h2>Clock Signal</h2>
+
+                <p>
+                    A clock signal provides a periodic timing reference
+                    for synchronous digital systems. Operations occur
+                    according to the rising or falling edge of the clock.
+                </p>
+
+                <div class="signal-box">
+
+                    <strong>Clock Pulse</strong>
+
+                    <div class="signal-line">
+                        <div class="wave"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="signal-card">
+
+                <h2>Output Signals</h2>
+
+                <p>
+                    Output signals contain the final result generated
+                    by the digital system. These signals may be sent
+                    to another circuit, displayed to the user, or stored
+                    for later processing.
+                </p>
+
+                <div class="signal-box">
+
+                    <strong>Output Data</strong>
+
+                    <div class="signal-line">
+                        <div class="wave"></div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Signal Table -->
+        <section class="table-section">
+
+            <h2>Signal Classification</h2>
+
+            <div class="table-wrapper">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Signal</th>
+                            <th>Type</th>
+                            <th>Purpose</th>
+                            <th>Typical Value</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Input</td>
+                            <td>Data</td>
+                            <td>Provides information to the system</td>
+                            <td>0 / 1</td>
+                        </tr>
+
+                        <tr>
+                            <td>Enable</td>
+                            <td>Control</td>
+                            <td>Activates a specific operation</td>
+                            <td>0 / 1</td>
+                        </tr>
+
+                        <tr>
+                            <td>Clock</td>
+                            <td>Timing</td>
+                            <td>Synchronizes system operations</td>
+                            <td>Pulse</td>
+                        </tr>
+
+                        <tr>
+                            <td>Reset</td>
+                            <td>Control</td>
+                            <td>Returns the system to initial state</td>
+                            <td>0 / 1</td>
+                        </tr>
+
+                        <tr>
+                            <td>Output</td>
+                            <td>Data</td>
+                            <td>Provides the processed result</td>
+                            <td>0 / 1</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <!-- Navigation -->
+        <div class="navigation">
+
+            <a href="datapath.html" class="btn">
+                ← Previous: Data Path
+            </a>
+
+            <a href="timing.html" class="btn">
+                Next: Timing →
+            </a>
+
+        </div>
+
+    </main>
+
+
+    <!-- Footer -->
+    <footer>
+
+        Digital Logic Simulator • Signals & Control Flow
+
+    </footer>
+
+</body>
+</html>

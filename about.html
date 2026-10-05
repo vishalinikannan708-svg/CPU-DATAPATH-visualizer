@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>About | Processor Control Unit</title>
+
+
+    <style>
+
+        /* =========================================
+           RESET
+        ========================================= */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+
+        body {
+
+            background: #07111f;
+
+            color: white;
+
+            min-height: 100vh;
+
+            overflow-x: hidden;
+        }
+
+
+        /* =========================================
+           NAVBAR
+        ========================================= */
+
+        nav {
+
+            height: 75px;
+
+            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 0 7%;
+
+            background: rgba(5, 15, 30, 0.95);
+
+            border-bottom:
+                1px solid rgba(0, 217, 255, 0.2);
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+            animation: navDown 0.7s ease;
+        }
+
+
+        @keyframes navDown {
+
+            from {
+
+                opacity: 0;
+
+                transform: translateY(-20px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform: translateY(0);
+            }
+        }
+
+
+        .logo {
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #00d9ff;
+
+            letter-spacing: 1px;
+        }
+
+
+        .logo span {
+
+            color: white;
+        }
+
+
+        .nav-links {
+
+            display: flex;
+
+            gap: 30px;
+        }
+
+
+        .nav-links a {
+
+            color: #aebdcb;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            position: relative;
+
+            transition: 0.3s;
+        }
+
+
+        .nav-links a:hover {
+
+            color: #00d9ff;
+        }
+
+
+        .nav-links a::after {
+
+            content: "";
+
+            position: absolute;
+
+            left: 0;
+
+            bottom: -7px;
+
+            width: 0;
+
+            height: 2px;
+
+            background: #00d9ff;
+
+            transition: 0.3s;
+        }
+
+
+        .nav-links a:hover::after {
+
+            width: 100%;
+        }
+
+
+        /* =========================================
+           BACKGROUND GLOW
+        ========================================= */
+
+        .glow {
+
+            position: fixed;
+
+            width: 450px;
+
+            height: 450px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(0, 217, 255, 0.035);
+
+            filter: blur(80px);
+
+            top: 100px;
+
+            right: -180px;
+
+            pointer-events: none;
+
+            z-index: 0;
+        }
+
+
+        /* =========================================
+           MAIN CONTAINER
+        ========================================= */
+
+        .container {
+
+            width: 84%;
+
+            max-width: 1200px;
+
+            margin: auto;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        /* =========================================
+           PAGE HEADER
+        ========================================= */
+
+        .page-header {
+
+            text-align: center;
+
+            padding: 70px 20px 45px;
+
+            animation: fadeUp 0.8s ease;
+        }
+
+
+        .small-title {
+
+            color: #00d9ff;
+
+            font-size: 13px;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .page-header h1 {
+
+            font-size: clamp(38px, 5vw, 58px);
+
+            margin-bottom: 18px;
+        }
+
+
+        .page-header h1 span {
+
+            color: #00d9ff;
+        }
+
+
+        .page-header p {
+
+            max-width: 750px;
+
+            margin: auto;
+
+            color: #9eb0c0;
+
+            line-height: 1.8;
+
+            font-size: 16px;
+        }
+
+
+        /* =========================================
+           INTRO CARD
+        ========================================= */
+
+        .intro-card {
+
+            background:
+                rgba(10, 27, 45, 0.78);
+
+            border:
+                1px solid rgba(0, 217, 255, 0.18);
+
+            border-radius: 16px;
+
+            padding: 35px;
+
+            margin-bottom: 30px;
+
+            backdrop-filter: blur(10px);
+
+            animation: fadeUp 0.8s ease 0.2s both;
+
+            transition: 0.3s;
+        }
+
+
+        .intro-card:hover {
+
+            border-color:
+                rgba(0, 217, 255, 0.45);
+
+            box-shadow:
+                0 0 30px
+                rgba(0, 217, 255, 0.06);
+        }
+
+
+        .section-label {
+
+            color: #00d9ff;
+
+            font-size: 13px;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .intro-card h2 {
+
+            font-size: 28px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .intro-card p {
+
+            color: #a9b9c8;
+
+            line-height: 1.8;
+
+            font-size: 15px;
+        }
+
+
+        /* =========================================
+           OBJECTIVE + SOLUTION
+        ========================================= */
+
+        .two-column {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 25px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .info-card {
+
+            background:
+                rgba(10, 27, 45, 0.75);
+
+            border:
+                1px solid #203c53;
+
+            border-radius: 15px;
+
+            padding: 30px;
+
+            transition: 0.35s;
+
+            animation: fadeUp 0.8s ease 0.4s both;
+        }
+
+
+        .info-card:hover {
+
+            transform: translateY(-5px);
+
+            border-color: #00d9ff;
+
+            box-shadow:
+                0 15px 35px
+                rgba(0, 217, 255, 0.08);
+        }
+
+
+        .icon {
+
+            width: 48px;
+
+            height: 48px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background:
+                rgba(0, 217, 255, 0.08);
+
+            border:
+                1px solid rgba(0, 217, 255, 0.25);
+
+            color: #00d9ff;
+
+            font-size: 23px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .info-card h3 {
+
+            font-size: 21px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .info-card p {
+
+            color: #9eafbe;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           WORKING FLOW
+        ========================================= */
+
+        .flow-section {
+
+            margin-top: 10px;
+
+            margin-bottom: 30px;
+
+            animation: fadeUp 0.8s ease 0.6s both;
+        }
+
+
+        .flow-section h2 {
+
+            text-align: center;
+
+            font-size: 28px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .flow-section h2 span {
+
+            color: #00d9ff;
+        }
+
+
+        .flow {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 12px;
+
+            align-items: center;
+        }
+
+
+        .flow-box {
+
+            background:
+                rgba(10, 27, 45, 0.8);
+
+            border:
+                1px solid #203c53;
+
+            border-radius: 12px;
+
+            padding: 22px 10px;
+
+            text-align: center;
+
+            transition: 0.3s;
+
+            position: relative;
+        }
+
+
+        .flow-box:hover {
+
+            border-color: #00d9ff;
+
+            transform: translateY(-5px);
+
+            box-shadow:
+                0 0 20px
+                rgba(0, 217, 255, 0.08);
+        }
+
+
+        .flow-number {
+
+            color: #00d9ff;
+
+            font-size: 12px;
+
+            margin-bottom: 8px;
+
+            letter-spacing: 1px;
+        }
+
+
+        .flow-box h3 {
+
+            font-size: 16px;
+
+            margin-bottom: 6px;
+        }
+
+
+        .flow-box p {
+
+            color: #7f94a7;
+
+            font-size: 11px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================================
+           FEATURES
+        ========================================= */
+
+        .features-section {
+
+            margin-bottom: 50px;
+
+            animation: fadeUp 0.8s ease 0.8s both;
+        }
+
+
+        .features-section h2 {
+
+            text-align: center;
+
+            font-size: 28px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .features-section h2 span {
+
+            color: #00d9ff;
+        }
+
+
+        .features {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 18px;
+        }
+
+
+        .feature {
+
+            background:
+                rgba(10, 27, 45, 0.7);
+
+            border:
+                1px solid #203c53;
+
+            border-radius: 12px;
+
+            padding: 25px;
+
+            transition: 0.3s;
+        }
+
+
+        .feature:hover {
+
+            border-color: #00d9ff;
+
+            transform: translateY(-4px);
+        }
+
+
+        .feature-number {
+
+            color: #00d9ff;
+
+            font-size: 12px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .feature h3 {
+
+            font-size: 17px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .feature p {
+
+            color: #879aaa;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           PAGE NAVIGATION
+        ========================================= */
+
+        .page-navigation {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            gap: 20px;
+
+            margin: 20px 0 55px;
+
+            padding-top: 25px;
+
+            border-top:
+                1px solid rgba(0, 217, 255, 0.12);
+        }
+
+
+        .page-nav-btn {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            min-width: 190px;
+
+            padding: 14px 24px;
+
+            border-radius: 10px;
+
+            border:
+                1px solid rgba(0, 217, 255, 0.25);
+
+            background:
+                rgba(10, 27, 45, 0.8);
+
+            color: #aebdcb;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            letter-spacing: 0.3px;
+
+            transition: 0.3s ease;
+        }
+
+
+        .page-nav-btn:hover {
+
+            color: #00d9ff;
+
+            border-color: #00d9ff;
+
+            background:
+                rgba(0, 217, 255, 0.08);
+
+            transform: translateY(-3px);
+
+            box-shadow:
+                0 8px 25px
+                rgba(0, 217, 255, 0.08);
+        }
+
+
+        .page-nav-btn.next {
+
+            color: #00d9ff;
+
+            border-color:
+                rgba(0, 217, 255, 0.45);
+        }
+
+
+        .page-nav-btn.next:hover {
+
+            background:
+                rgba(0, 217, 255, 0.12);
+
+            box-shadow:
+                0 8px 30px
+                rgba(0, 217, 255, 0.12);
+        }
+
+
+        .nav-arrow {
+
+            font-size: 18px;
+
+            line-height: 1;
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        footer {
+
+            border-top:
+                1px solid rgba(0, 217, 255, 0.15);
+
+            text-align: center;
+
+            padding: 25px;
+
+            color: #65798b;
+
+            font-size: 12px;
+
+            margin-top: 20px;
+        }
+
+
+        footer span {
+
+            color: #00d9ff;
+        }
+
+
+        /* =========================================
+           ANIMATIONS
+        ========================================= */
+
+        @keyframes fadeUp {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(25px);
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0);
+            }
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 900px) {
+
+            .nav-links {
+
+                display: none;
+            }
+
+
+            .two-column {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .flow {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .features {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .container {
+
+                width: 90%;
+            }
+
+
+            .page-header {
+
+                padding-top: 50px;
+            }
+
+
+            .flow {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .features {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .intro-card,
+            .info-card {
+
+                padding: 25px;
+            }
+
+
+            /* PAGE NAVIGATION - MOBILE */
+
+            .page-navigation {
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                margin-bottom: 40px;
+            }
+
+
+            .page-nav-btn {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         NAVBAR
+    ========================================== -->
+
+    <nav>
+
+        <div class="logo">
+
+            CPU<span>CONTROL</span>
+
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="about.html">
+                About
+            </a>
+
+            <a href="simulator.html">
+                Simulator
+            </a>
+
+            <a href="datapath.html">
+                Datapath
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- BACKGROUND -->
+
+    <div class="glow"></div>
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="container">
+
+
+        <!-- PAGE HEADER -->
+
+        <section class="page-header">
+
+            <div class="small-title">
+
+                PROJECT OVERVIEW
+
+            </div>
+
+
+            <h1>
+
+                About the
+                <span>Project</span>
+
+            </h1>
+
+
+            <p>
+
+                An interactive web-based platform designed
+                to understand processor control signals,
+                instruction execution, and datapath operations
+                through visualization and simulation.
+
+            </p>
+
+        </section>
+
+
+
+        <!-- =====================================
+             INTRODUCTION
+        ====================================== -->
+
+        <section class="intro-card">
+
+            <div class="section-label">
+
+                01 • INTRODUCTION
+
+            </div>
+
+
+            <h2>
+
+                Processor Control Unit
+
+            </h2>
+
+
+            <p>
+
+                The Control Unit is a fundamental component
+                of a processor that generates control signals
+                according to the instruction being executed.
+
+                These signals determine how different
+                components such as the register file,
+                ALU, and memory should operate.
+
+                This project provides an interactive way to
+                analyze these signals and understand their
+                role in instruction execution.
+
+            </p>
+
+        </section>
+
+
+
+        <!-- =====================================
+             OBJECTIVE + SOLUTION
+        ====================================== -->
+
+        <section class="two-column">
+
+
+            <!-- OBJECTIVE -->
+
+            <div class="info-card">
+
+                <div class="icon">
+                    🎯
+                </div>
+
+
+                <h3>
+
+                    Project Objective
+
+                </h3>
+
+
+                <p>
+
+                    To develop an interactive platform that
+                    helps users understand how control signals
+                    are generated for different processor
+                    instructions and how those signals affect
+                    the datapath.
+
+                </p>
+
+            </div>
+
+
+
+            <!-- SOLUTION -->
+
+            <div class="info-card">
+
+                <div class="icon">
+                    ⚡
+                </div>
+
+
+                <h3>
+
+                    Our Approach
+
+                </h3>
+
+
+                <p>
+
+                    The application allows users to select
+                    instructions and observe their corresponding
+                    control signal values, datapath activity,
+                    and instruction execution stages through
+                    interactive visualization.
+
+                </p>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =====================================
+             WORKING FLOW
+        ====================================== -->
+
+        <section class="flow-section">
+
+            <h2>
+
+                How It <span>Works</span>
+
+            </h2>
+
+
+            <div class="flow">
+
+
+                <div class="flow-box">
+
+                    <div class="flow-number">
+                        STEP 01
+                    </div>
+
+                    <h3>
+                        Instruction
+                    </h3>
+
+                    <p>
+                        Select an instruction
+                        such as ADD, LW or SW.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-box">
+
+                    <div class="flow-number">
+                        STEP 02
+                    </div>
+
+                    <h3>
+                        Decode
+                    </h3>
+
+                    <p>
+                        The instruction is
+                        decoded by the control unit.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-box">
+
+                    <div class="flow-number">
+                        STEP 03
+                    </div>
+
+                    <h3>
+                        Signals
+                    </h3>
+
+                    <p>
+                        Control signals are
+                        generated dynamically.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-box">
+
+                    <div class="flow-number">
+                        STEP 04
+                    </div>
+
+                    <h3>
+                        Datapath
+                    </h3>
+
+                    <p>
+                        Active datapath components
+                        are identified.
+                    </p>
+
+                </div>
+
+
+                <div class="flow-box">
+
+                    <div class="flow-number">
+                        STEP 05
+                    </div>
+
+                    <h3>
+                        Result
+                    </h3>
+
+                    <p>
+                        The instruction execution
+                        process is visualized.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =====================================
+             FEATURES
+        ====================================== -->
+
+        <section class="features-section">
+
+            <h2>
+
+                Project <span>Features</span>
+
+            </h2>
+
+
+            <div class="features">
+
+
+                <div class="feature">
+
+                    <div class="feature-number">
+                        FEATURE 01
+                    </div>
+
+                    <h3>
+                        Instruction Analysis
+                    </h3>
+
+                    <p>
+                        Analyze control signals
+                        for different instructions.
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-number">
+                        FEATURE 02
+                    </div>
+
+                    <h3>
+                        Signal Visualization
+                    </h3>
+
+                    <p>
+                        View RegWrite, MemRead,
+                        MemWrite, ALUSrc and other
+                        control signals.
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-number">
+                        FEATURE 03
+                    </div>
+
+                    <h3>
+                        Datapath Visualization
+                    </h3>
+
+                    <p>
+                        Understand how data moves
+                        through processor components.
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <div class="feature-number">
+                        FEATURE 04
+                    </div>
+
+                    <h3>
+                        Live Simulation
+                    </h3>
+
+                    <p>
+                        Observe instruction execution
+                        through an interactive simulation.
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             PAGE NAVIGATION
+        ====================================== -->
+
+        <div class="page-navigation">
+
+            <a href="index.html" class="page-nav-btn">
+
+                <span class="nav-arrow">←</span>
+
+                Previous : Home
+
+            </a>
+
+
+            <a href="simulator.html"
+               class="page-nav-btn next">
+
+                Next : Simulation
+
+                <span class="nav-arrow">→</span>
+
+            </a>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer>
+
+        Processor Control Unit Signal Generation
+        and Analysis
+
+        <br><br>
+
+        <span>Interactive Web-Based Simulation</span>
+
+    </footer>
+
+
+</body>
+
+</html>
